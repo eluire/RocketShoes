@@ -34,7 +34,7 @@ function Home(props) {
     dispatch(CartActions.addToCart(produto));
   }
 
-  function montarCatalogo() {
+  function montarCatalogo(props) {
     if (Object.keys(produtos).length > 0) {
       return produtos.map((produto) => (
         <li key={produto.id}>
@@ -44,7 +44,8 @@ function Home(props) {
 
           <button type="button" onClick={() => handleAddProduct(produto)}>
             <div>
-              <MdAddShoppingCart size={16} color="#FFF" /> 100
+              <MdAddShoppingCart size={16} color="#FFF" />
+              {props.amount[produto.id] || 0}
             </div>
             <span>ADICIONAR AO CARRINHO</span>
           </button>
@@ -52,7 +53,14 @@ function Home(props) {
       ));
     }
   }
-  return <Product_list>{montarCatalogo()}</Product_list>;
+  return <Product_list>{montarCatalogo(props)}</Product_list>;
 }
 
-export default connect()(Home);
+const mapStateToProps = (state) => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+    return amount;
+  }, {}),
+});
+
+export default connect(mapStateToProps)(Home);

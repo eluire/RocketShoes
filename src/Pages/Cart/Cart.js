@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { formatPrice } from "../../Utils/format";
 import {
   MdRemoveCircleOutline,
   MdAddCircleOutline,
@@ -11,6 +12,7 @@ import { Container, Total, ProductTable } from "./styles";
 import * as cartActions from "../../store/modules/cart/actions";
 
 function Cart(props) {
+  console.log(props.total);
   function handleRemoveProduct(produto) {
     const { dispatch } = props;
 
@@ -63,7 +65,7 @@ function Cart(props) {
                   </div>
                 </td>
                 <td>
-                  <strong>R$258,80</strong>
+                  <strong>{produto.subtotal}</strong>
                 </td>
                 <td>
                   <button
@@ -76,15 +78,15 @@ function Cart(props) {
               </tr>
             ))}
           </tbody>
-          <footer>
-            <button type="button">Finalizar pedido</button>
-
-            <Total>
-              <span>TOTAL</span>
-              <strong>R$1920,28</strong>
-            </Total>
-          </footer>
         </ProductTable>
+        <footer>
+          <button type="button">Finalizar pedido</button>
+
+          <Total>
+            <span>TOTAL</span>
+            <strong>{props.total}</strong>
+          </Total>
+        </footer>
       </Container>
     );
   }
@@ -92,6 +94,14 @@ function Cart(props) {
 }
 
 const mapStateToProps = (state) => ({
-  cart: state.cart,
+  cart: state.cart.map((produto) => ({
+    ...produto,
+    subtotal: formatPrice(produto.price * produto.amount),
+  })),
+  total: formatPrice(
+    state.cart.reduce((total, produto) => {
+      return total + produto.price * produto.amount;
+    }, 0)
+  ),
 });
 export default connect(mapStateToProps)(Cart);
