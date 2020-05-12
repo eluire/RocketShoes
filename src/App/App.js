@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import GlobalStyle from "../styles/global";
 import Routes from "../Routes";
 import Header from "../components/Header/Header";
+import "../config/ReactotronConfig";
 import store from "../store";
 function App() {
   return (

@@ -1,7 +1,8 @@
 import produce from "immer";
 export default function cart(state = [], action) {
+  console.log(action.type);
   switch (action.type) {
-    case "ADD_TO_CART":
+    case "@cart/ADD_SUCCESS":
       return produce(state, (draft) => {
         const productIndex = draft.findIndex((p) => p.id === action.produto.id);
 
@@ -14,7 +15,7 @@ export default function cart(state = [], action) {
           });
         }
       });
-    case "REMOVE_FROM_CART":
+    case "@cart/REMOVE":
       return produce(state, (draft) => {
         const productIndex = draft.findIndex((p) => p.id === action.id);
 
@@ -22,7 +23,7 @@ export default function cart(state = [], action) {
           draft.splice(productIndex, 1);
         }
       });
-    case "UPDATE_AMAUNT_CART":
+    case "@cart/UPDATE_AMOUNT":
       return produce(state, (draft) => {
         const product = draft.find((p) => p.id === action.id);
 

@@ -1,36 +1,45 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { formatPrice } from "../../Utils/format";
 import {
   MdRemoveCircleOutline,
   MdAddCircleOutline,
-  MdRemoveShoppingCart,
   MdDelete,
 } from "react-icons/md";
-import { connect } from "react-redux";
 import { Container, Total, ProductTable } from "./styles";
 import * as cartActions from "../../store/modules/cart/actions";
 
 function Cart(props) {
-  console.log(props.total);
-  function handleRemoveProduct(produto) {
-    const { dispatch } = props;
+  const cart = useSelector((state) =>
+    state.cart.map((product) => ({
+      ...product,
+      subtotal: formatPrice(product.price * product.amount),
+    }))
+  );
+  const total = useSelector((state) =>
+    formatPrice(
+      state.cart.reduce((totalSum, product) => {
+        return totalSum + product.price * product.amount;
+      }, 0)
+    )
+  );
 
+  const dispatch = useDispatch();
+
+  // console.log(props.total);
+
+  function handleRemoveProduct(produto) {
     dispatch(cartActions.removeFromCart(produto.id));
   }
 
   function increment(produto) {
-    const { dispatch } = props;
-
     dispatch(cartActions.updateAmaunt(produto.id, produto.amount + 1));
   }
 
   function decrement(produto) {
-    const { dispatch } = props;
-
     dispatch(cartActions.updateAmaunt(produto.id, produto.amount - 1));
   }
-  function mountTable(props) {
+  function mountTable() {
     return (
       <Container>
         <ProductTable>
@@ -44,7 +53,7 @@ function Cart(props) {
             </tr>
           </thead>
           <tbody>
-            {props.cart.map((produto) => (
+            {cart.map((produto) => (
               <tr key={produto.id}>
                 <td>
                   <img src={produto.image} alt={produto.title} />
@@ -84,7 +93,7 @@ function Cart(props) {
 
           <Total>
             <span>TOTAL</span>
-            <strong>{props.total}</strong>
+            <strong>{total}</strong>
           </Total>
         </footer>
       </Container>
@@ -93,15 +102,4 @@ function Cart(props) {
   return mountTable(props);
 }
 
-const mapStateToProps = (state) => ({
-  cart: state.cart.map((produto) => ({
-    ...produto,
-    subtotal: formatPrice(produto.price * produto.amount),
-  })),
-  total: formatPrice(
-    state.cart.reduce((total, produto) => {
-      return total + produto.price * produto.amount;
-    }, 0)
-  ),
-});
-export default connect(mapStateToProps)(Cart);
+export default Cart;

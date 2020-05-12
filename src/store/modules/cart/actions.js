@@ -1,20 +1,25 @@
-export function addToCart(produto) {
+export function addToCartRequest(id) {
   return {
-    type: "ADD_TO_CART",
+    type: "@cart/ADD_REQUEST",
+    id,
+  };
+}
+export function addToCartSuccess(produto) {
+  return {
+    type: "@cart/ADD_SUCCESS",
     produto,
   };
 }
-
 export function removeFromCart(id) {
   return {
-    type: "REMOVE_FROM_CART",
+    type: "@cart/REMOVE",
     id,
   };
 }
 
 export function updateAmaunt(id, amount) {
   return {
-    type: "UPDATE_AMAUNT_CART",
+    type: "@cart/UPDATE_AMOUNT",
     id,
     amount,
   };

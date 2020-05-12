@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
 import * as CartActions from "../../store/modules/cart/actions";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { MdAddShoppingCart } from "react-icons/md";
 import { Product_list } from "./styles";
 import { formatPrice } from "../../Utils/format";
 import api from "../../services/api";
 
-function Home(props) {
+function Home() {
   const [produtos, setProdutos] = useState([]);
+
+  const amount = useSelector((state) =>
+    state.cart.reduce((sumAmount, product) => {
+      sumAmount[product.id] = product.amount;
+      return sumAmount;
+    }, {})
+  );
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getProtutos();
@@ -29,38 +38,28 @@ function Home(props) {
       console.log("erro na requisição");
     }
   }
-  function handleAddProduct(produto) {
-    const { dispatch } = props;
-    dispatch(CartActions.addToCart(produto));
+  function handleAddProduct(id) {
+    dispatch(CartActions.addToCartRequest(id));
   }
 
-  function montarCatalogo(props) {
-    if (Object.keys(produtos).length > 0) {
-      return produtos.map((produto) => (
-        <li key={produto.id}>
-          <img src={produto.image} alt="Tênis" />
-          <strong>{produto.title}</strong>
-          <span>{produto.precoFormatado}</span>
+  function montarCatalogo() {
+    return produtos.map((produto) => (
+      <li key={String(produto.id)}>
+        <img src={produto.image} alt={produto.title} />
+        <strong>{produto.title}</strong>
+        <span>{produto.precoFormatado}</span>
 
-          <button type="button" onClick={() => handleAddProduct(produto)}>
-            <div>
-              <MdAddShoppingCart size={16} color="#FFF" />
-              {props.amount[produto.id] || 0}
-            </div>
-            <span>ADICIONAR AO CARRINHO</span>
-          </button>
-        </li>
-      ));
-    }
+        <button type="button" onClick={() => handleAddProduct(produto.id)}>
+          <div>
+            <MdAddShoppingCart size={16} color="#FFF" />
+            {amount[produto.id] || 0}
+          </div>
+          <span>ADICIONAR AO CARRINHO</span>
+        </button>
+      </li>
+    ));
   }
-  return <Product_list>{montarCatalogo(props)}</Product_list>;
+  return <Product_list>{montarCatalogo()}</Product_list>;
 }
 
-const mapStateToProps = (state) => ({
-  amount: state.cart.reduce((amount, product) => {
-    amount[product.id] = product.amount;
-    return amount;
-  }, {}),
-});
-
-export default connect(mapStateToProps)(Home);
+export default Home;
