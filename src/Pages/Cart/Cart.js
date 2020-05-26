@@ -33,11 +33,11 @@ function Cart(props) {
   }
 
   function increment(produto) {
-    dispatch(cartActions.updateAmaunt(produto.id, produto.amount + 1));
+    dispatch(cartActions.updateAmountRequest(produto.id, produto.amount + 1));
   }
 
   function decrement(produto) {
-    dispatch(cartActions.updateAmaunt(produto.id, produto.amount - 1));
+    dispatch(cartActions.updateAmountRequest(produto.id, produto.amount - 1));
   }
   function mountTable() {
     return (
